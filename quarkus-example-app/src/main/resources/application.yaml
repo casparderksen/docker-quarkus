@@ -1,0 +1,18 @@
+---
+# Enable CORS
+quarkus:
+  http:
+    cors:
+      ~: true
+      methods: GET,PUT,POST
+
+# Application info
+info:
+  project:
+    groupId: ${project.groupId}
+    artifactId: ${project.artifactId}
+    version: ${project.version}
+  git:
+    buildTime: ${git.build.time}
+    branch: ${git.branch}
+    commitId: ${git.commit.id}

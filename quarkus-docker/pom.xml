@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.acme</groupId>
+        <artifactId>quarkus-parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../quarkus-parent</relativePath>
+    </parent>
+
+    <name>Quarkus Docker base image</name>
+    <artifactId>quarkus-docker</artifactId>
+    <packaging>jar</packaging>
+
+    <profiles>
+        <profile>
+            <id>docker</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>quarkus/jvm</name>
+                                    <build>
+                                        <contextDir>jvm</contextDir>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                        <assembly>
+                                            <inline>
+                                                <file>
+                                                    <source>${project.build.directory}/docker-extra/run-java/run-java.sh</source>
+                                                    <destName>run-java.sh</destName>
+                                                </file>
+                                            </inline>
+                                        </assembly>
+                                    </build>
+                                </image>
+                                <image>
+                                    <name>quarkus/native</name>
+                                    <build>
+                                        <contextDir>native</contextDir>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>io.fabric8</groupId>
+                                <artifactId>run-java-sh</artifactId>
+                                <version>${run-java-sh.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+</project>
