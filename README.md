@@ -26,7 +26,6 @@ This is a microservices chassis for building applications with JEE8/MicroProfile
 MicroProfile:
 - Metrics: [http://localhost:8080/metrics](http://localhost:8080/metrics)
 - OpenAPI: [http://localhost:8080/openapi](http://localhost:8080/openapi)
-- Health: [http://localhost:8080/health](http://localhost:8080/health)
 
 MicroProfile Extension UIs:
 - Health UI: [http://localhost:8080/health-ui/](http://localhost:8080/health-ui/)
