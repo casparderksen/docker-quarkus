@@ -1,4 +1,4 @@
-package org.acme.app.adapter.rest;
+package org.acme.example.application.adapter.rest;
 
 import lombok.Getter;
 import org.eclipse.microprofile.config.Config;
@@ -19,7 +19,7 @@ import javax.ws.rs.core.MediaType;
 public class InfoResource {
 
     @Inject
-    private Config config;
+    Config config;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -1,4 +1,4 @@
-package org.acme.app.adapter.rest;
+package org.acme.example.application.adapter.rest;
 
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;

@@ -1,4 +1,4 @@
-package org.acme.app.adapter.rest;
+package org.acme.example.application.adapter.rest;
 
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;

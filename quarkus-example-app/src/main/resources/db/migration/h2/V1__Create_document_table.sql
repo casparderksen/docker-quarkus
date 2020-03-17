@@ -1,0 +1,4 @@
+CREATE TABLE document (
+    id   VARCHAR2(36)  PRIMARY KEY,
+    name VARCHAR2(100) NOT NULL
+);

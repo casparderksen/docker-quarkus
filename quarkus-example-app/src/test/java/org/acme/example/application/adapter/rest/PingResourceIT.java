@@ -1,4 +1,4 @@
-package org.acme.app.adapter.rest;
+package org.acme.example.application.adapter.rest;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-public class PingResourceTest {
+class PingResourceIT {
 
     @Test
     public void testHelloEndpoint() {
