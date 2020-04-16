@@ -16,8 +16,8 @@ public interface Responses {
         return Response.ok(entity).links(self).build();
     }
 
-    static <T> Response getEntitiesResponse(List<T> entities, int start, int count, UriInfo uriInfo) {
-        final var paginationLinks = Links.getPaginationLinks(start, count, entities.size(), uriInfo);
+    static <T> Response getEntitiesResponse(List<T> entities, Range range, UriInfo uriInfo) {
+        final var paginationLinks = Links.getPaginationLinks(range, entities.size(), uriInfo);
         return Response.ok(toEntity(entities)).links(paginationLinks).build();
     }
 

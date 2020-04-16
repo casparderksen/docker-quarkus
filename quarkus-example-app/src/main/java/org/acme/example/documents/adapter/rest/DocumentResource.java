@@ -1,7 +1,7 @@
 package org.acme.example.documents.adapter.rest;
 
 import org.acme.example.documents.domain.service.DocumentRepository;
-import org.acme.util.adapter.rest.Links;
+import org.acme.util.adapter.rest.Range;
 import org.acme.util.adapter.rest.Responses;
 import org.acme.util.domain.service.validation.ValidUUID;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -18,8 +18,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 import javax.transaction.Transactional;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
@@ -64,13 +62,10 @@ public class DocumentResource {
             links = {@Link(name = "prev", description = "previous page", operationId = "getDocuments"),
                     @Link(name = "next", description = "next page", operationId = "getDocuments")})
     @APIResponse(responseCode = "400", description = "Bad request (invalid range)")
-    public Response getDocuments(
-            @QueryParam(Links.OFFSET) @DefaultValue("0") @Min(value = 0, message = "parameter 'offset' must be at least {value}") int offset,
-            @QueryParam(Links.LIMIT) @DefaultValue("20") @Min(value = 1, message = "parameter 'limit' must be at least {value}") @Max(value = 100, message = "parameter 'limit' must be at most {value}") int limit,
-            @Context UriInfo uriInfo) {
-        final var documents = documentRepository.findRange(offset, limit);
+    public Response getDocuments(@BeanParam Range range, @Context UriInfo uriInfo) {
+        final var documents = documentRepository.findRange(range.getOffset(), range.getLimit());
         final var dtoList = documents.stream().map(DocumentMapper.INSTANCE::fromDocument).collect(toList());
-        return Responses.getEntitiesResponse(dtoList, offset, limit, uriInfo);
+        return Responses.getEntitiesResponse(dtoList, range, uriInfo);
     }
 
     @POST

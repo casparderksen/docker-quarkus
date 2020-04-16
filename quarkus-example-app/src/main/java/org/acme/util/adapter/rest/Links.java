@@ -17,9 +17,11 @@ public interface Links {
         return Link.fromUri(uri).rel(SELF).build();
     }
 
-    static Link[] getPaginationLinks(int offset, int limit, int nrAvailable, UriInfo uriInfo) {
+    static Link[] getPaginationLinks(Range range, int count, UriInfo uriInfo) {
+        int offset = range.getOffset();
+        int limit = range.getLimit();
         final List<Link> links = new ArrayList<>();
-        if (limit <= nrAvailable) {
+        if (limit <= count) {
             final var next = uriInfo.getAbsolutePathBuilder()
                     .queryParam(OFFSET, offset + limit)
                     .queryParam(LIMIT, limit).build();

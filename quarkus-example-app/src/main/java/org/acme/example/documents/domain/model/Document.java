@@ -17,7 +17,7 @@ import java.util.UUID;
 @Table(name = "DOCUMENT")
 @NamedQueries({
         @NamedQuery(name = "Document.findId", query = "SELECT e.id FROM Document e WHERE e.uuid = :uuid"),
-        @NamedQuery(name = "Document.findAll", query = "SELECT e FROM Document e"),
+        @NamedQuery(name = "Document.findAll", query = "SELECT e FROM Document e ORDER BY e.id"),
         @NamedQuery(name = "Document.countAll", query = "SELECT count(e) FROM Document e")
 })
 public class Document extends BaseEntity {
