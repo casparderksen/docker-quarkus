@@ -39,17 +39,18 @@ public class DocumentResource {
     DocumentRepository documentRepository;
 
     @GET
-    @Path("{id}")
+    @Path("{uuid}")
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "getDocument", description = "Gets a document by id")
-    @Parameter(name = "id", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
+    @Parameter(name = "uuid", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
     @APIResponse(responseCode = "200",
             description = "Success, returns the value",
-            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentDTO.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentMessage.class)))
     @APIResponse(responseCode = "404", description = "Not found")
-    public Response getDocument(@PathParam("id") @ValidUUID String id, @Context UriInfo uriInfo) {
-        var documentOptional = documentRepository.findById(UUID.fromString(id));
-        return Responses.getEntityResponse(documentOptional.map(DocumentDTO::fromDocument), uriInfo);
+    public Response getDocument(@PathParam("uuid") @ValidUUID String uuid, @Context UriInfo uriInfo) {
+        var document = documentRepository.findByUuid(UUID.fromString(uuid));
+        var dto = DocumentMapper.INSTANCE.fromDocument(document);
+        return Responses.getEntityResponse(dto, uriInfo);
     }
 
     @GET
@@ -59,7 +60,7 @@ public class DocumentResource {
     @Parameter(name = "limit", in = ParameterIn.PATH, schema = @Schema(type = SchemaType.INTEGER), description = "Max chunk size of returned values")
     @APIResponse(responseCode = "200",
             description = "Success, returns the collection",
-            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, implementation = DocumentDTO.class)),
+            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.ARRAY, implementation = DocumentMessage.class)),
             links = {@Link(name = "prev", description = "previous page", operationId = "getDocuments"),
                     @Link(name = "next", description = "next page", operationId = "getDocuments")})
     @APIResponse(responseCode = "400", description = "Bad request (invalid range)")
@@ -68,8 +69,8 @@ public class DocumentResource {
             @QueryParam(Links.LIMIT) @DefaultValue("20") @Min(value = 1, message = "parameter 'limit' must be at least {value}") @Max(value = 100, message = "parameter 'limit' must be at most {value}") int limit,
             @Context UriInfo uriInfo) {
         final var documents = documentRepository.findRange(offset, limit);
-        final var documentDTOs = documents.stream().map(DocumentDTO::fromDocument).collect(toList());
-        return Responses.getEntityResponse(documentDTOs, offset, limit, uriInfo);
+        final var dtoList = documents.stream().map(DocumentMapper.INSTANCE::fromDocument).collect(toList());
+        return Responses.getEntitiesResponse(dtoList, offset, limit, uriInfo);
     }
 
     @POST
@@ -78,38 +79,38 @@ public class DocumentResource {
     @Operation(operationId = "createDocument", description = "Creates a new document")
     @APIResponse(responseCode = "201",
             description = "Success, returns the value",
-            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentDTO.class)))
-    public Response createDocument(@RequestBody(description = "new document") DocumentDTO documentDTO,
+            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentMessage.class)))
+    public Response createDocument(@RequestBody(description = "new document") DocumentMessage dto,
                                    @Context UriInfo uriInfo) {
-        final var document = documentRepository.create(documentDTO.toDocument(UUID.randomUUID()));
-        return Responses.getCreatedResponse(DocumentDTO.fromDocument(document), document.getId(), uriInfo);
+        var document = documentRepository.create(DocumentMapper.INSTANCE.toDocument(dto));
+        return Responses.getCreatedResponse(DocumentMapper.INSTANCE.fromDocument(document), document.getUuid(), uriInfo);
     }
 
     @PUT
-    @Path("{id}")
+    @Path("{uuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Operation(operationId = "updateDocument", description = "Updates the document with the specified id")
-    @Parameter(name = "id", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
+    @Parameter(name = "uuid", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
     @APIResponse(responseCode = "200",
             description = "Success, returns the new item",
-            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentDTO.class)))
+            content = @Content(mediaType = "application/json", schema = @Schema(type = SchemaType.OBJECT, implementation = DocumentMessage.class)))
     @APIResponse(responseCode = "404", description = "Not found")
-    public Response updateDocument(@PathParam("id") @ValidUUID String id,
-                                   @RequestBody(description = "updated document") DocumentDTO documentDTO,
+    public Response updateDocument(@PathParam("uuid") @ValidUUID String uuid,
+                                   @RequestBody(description = "updated document") DocumentMessage dto,
                                    @Context UriInfo uriInfo) {
-        var document = documentRepository.update(documentDTO.toDocument(UUID.fromString(id)));
-        return Responses.getEntityResponse(DocumentDTO.fromDocument(document), uriInfo);
+        var document = documentRepository.updateByUuid(UUID.fromString(uuid), DocumentMapper.INSTANCE.toDocument(dto));
+        return Responses.getEntityResponse(DocumentMapper.INSTANCE.fromDocument(document), uriInfo);
     }
 
     @DELETE
-    @Path("{id}")
+    @Path("{uuid}")
     @Operation(operationId = "deleteDocument", description = "Deletes the document with the specified id")
-    @Parameter(name = "id", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
+    @Parameter(name = "uuid", description = "id of the document", in = ParameterIn.PATH, required = true, schema = @Schema(type = SchemaType.STRING))
     @APIResponse(responseCode = "204", description = "Success, no content")
     @APIResponse(responseCode = "404", description = "Not found")
-    public Response deleteDocument(@PathParam("id") @ValidUUID String id, @Context UriInfo uriInfo) {
-        documentRepository.deleteById(UUID.fromString(id));
+    public Response deleteDocument(@PathParam("uuid") @ValidUUID String uuid, @Context UriInfo uriInfo) {
+        documentRepository.deleteByUuid(UUID.fromString(uuid));
         return Responses.getNoContentResponse();
     }
 

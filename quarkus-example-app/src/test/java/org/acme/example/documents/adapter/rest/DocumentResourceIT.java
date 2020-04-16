@@ -12,6 +12,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import java.net.URL;
 
 import static io.restassured.RestAssured.given;
+import static org.acme.util.hamcrest.matchers.UuidMatcher.isValidUUID;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
@@ -20,31 +21,36 @@ import static org.hamcrest.Matchers.equalTo;
 @TestMethodOrder(OrderAnnotation.class)
 class DocumentResourceIT {
 
-    private static String id;
+    private static String uuid;
 
     @TestHTTPResource
-    URL url;
+    URL deploymentURL;
 
     @SneakyThrows
+    private URL getResourceURL(String path) {
+        return new URL(deploymentURL.getProtocol(), "localhost", deploymentURL.getPort(), path);
+    }
+
     private String relation(String path, String name) {
-        return "<" + new URL(url, path) + ">; rel=\"" + name + "\"";
+        return "<" + getResourceURL(path) + ">; rel=\"" + name + "\"";
     }
 
     @SneakyThrows
     private String location(String path) {
-        return new URL(url, path).toString();
+        return getResourceURL(path).toString();
     }
 
     @Test
     @Order(1)
     public void shouldCreateDocument() {
-        var response = given().body(DocumentDTO.builder().name("foo").build())
+        var response = given().body(DocumentMessage.builder().name("foo").build())
                 .and().contentType(ContentType.JSON)
                 .when().post("api/documents")
                 .then().statusCode(201)
                 .and().extract().response();
-        id = response.body().path("id");
-        assertThat(response.header("Location"), equalTo(location("api/documents/" + id)));
+        uuid = response.body().path("uuid");
+        assertThat(uuid, isValidUUID());
+        assertThat(response.header("Location"), equalTo(location("/api/documents/" + uuid)));
     }
 
     @Test
@@ -60,24 +66,24 @@ class DocumentResourceIT {
     @Order(3)
     public void shouldGetDocument() {
         given()
-                .pathParam("id", id)
+                .pathParam("id", uuid)
                 .when().get("api/documents/{id}")
                 .then().statusCode(200)
-                .and().header("Link", equalTo(relation("api/documents/" + id, "self")))
-                .and().body("id", equalTo(id))
+                .and().header("Link", equalTo(relation("/api/documents/" + uuid, "self")))
+                .and().body("uuid", equalTo(uuid))
                 .and().body("name", equalTo("foo"));
     }
 
     @Test
     @Order(4)
     public void shouldUpdateDocument() {
-        given().body(DocumentDTO.builder().name("bar").build())
+        given().body(DocumentMessage.builder().name("bar").build())
                 .and().contentType(ContentType.JSON)
-                .and().pathParam("id", id)
-                .when().put("api/documents/{id}")
+                .and().pathParam("uuid", uuid)
+                .when().put("api/documents/{uuid}")
                 .then().statusCode(200)
-                .and().header("Link", equalTo(relation("api/documents/" + id, "self")))
-                .and().body("id", equalTo(id))
+                .and().header("Link", equalTo(relation("/api/documents/" + uuid, "self")))
+                .and().body("uuid", equalTo(uuid))
                 .and().body("name", equalTo("bar"));
     }
 
@@ -94,8 +100,8 @@ class DocumentResourceIT {
     @Order(6)
     public void shouldDeleteDocument() {
         given()
-                .when().pathParam("id", id)
-                .and().delete("api/documents/{id}")
+                .when().pathParam("uuid", uuid)
+                .and().delete("api/documents/{uuid}")
                 .then().statusCode(204);
     }
 
@@ -103,18 +109,18 @@ class DocumentResourceIT {
     @Order(7)
     public void shouldNotGetDocument() {
         given()
-                .when().pathParam("id", id)
-                .and().get("api/documents/{id}")
+                .when().pathParam("uuid", uuid)
+                .and().get("api/documents/{uuid}")
                 .then().statusCode(404);
     }
 
     @Test
     @Order(8)
     public void shouldNotUpdateDocument() {
-        given().body(DocumentDTO.builder().name("bar").build())
+        given().body(DocumentMessage.builder().name("bar").build())
                 .and().contentType(ContentType.JSON)
-                .when().pathParam("id", id)
-                .and().put("api/documents/{id}")
+                .when().pathParam("uuid", uuid)
+                .and().put("api/documents/{uuid}")
                 .then().statusCode(404);
     }
 }

@@ -36,3 +36,38 @@ MicroProfile:
 
 MicroProfile Extension UIs:
 - Swagger UI: [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/)
+
+# Oracle
+
+See [here](https://github.com/quarkusio/quarkus/issues/1658#issuecomment-523618130) for native Oracle support.
+
+# Docker Compose example
+
+The directory [docker-compose](docker-compose) contains a Docker Compose configuration to run a containerized application 
+and Oracle database.
+
+## Prerequisites
+
+First build an Oracle container image as described in [https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance). 
+For Oracle Database 12.2.0.1 Enterprise Edition this involves the following steps:
+
+1. Place `linuxx64_12201_database.zip` in `dockerfiles/12.2.0.1`.
+2. Go to `dockerfiles` and run `buildDockerImage.sh -v 12.2.0.1 -e`
+
+## Build the application
+
+Go to directory [`quarkus-example-app`](quarkus-example-app) and build the application image:
+ 
+     $ mvn package -Pdocker,oracle
+
+## Build the database
+
+Go to the directory [`docker-compose`](docker-compose). First start the database container:
+
+    $ docker-compose up -d oracledb
+    $ docker-compose logs -f oracledb
+
+Follow the log file and wait for the database to build. Then start the application container:
+
+    $ docker-compose up -d  example-app
+    $ docker-compose logs -f example-app

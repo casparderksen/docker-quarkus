@@ -11,8 +11,8 @@
         <relativePath>../quarkus-parent</relativePath>
     </parent>
 
-    <artifactId>quarkus-example-app</artifactId>
     <description>Quarkus example application</description>
+    <artifactId>quarkus-example-app</artifactId>
 
     <dependencies>
 
@@ -34,11 +34,6 @@
         <dependency>
             <groupId>io.quarkus</groupId>
             <artifactId>quarkus-flyway</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.quarkus</groupId>
-            <artifactId>quarkus-jdbc-h2</artifactId>
         </dependency>
 
         <dependency>
@@ -76,6 +71,32 @@
     </dependencies>
 
     <profiles>
+        <profile>
+            <id>h2</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>io.quarkus</groupId>
+                    <artifactId>quarkus-jdbc-h2</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>oracle</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.oracle.ojdbc</groupId>
+                    <artifactId>ojdbc10</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
         <profile>
             <id>docker</id>
             <build>
@@ -129,5 +150,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>

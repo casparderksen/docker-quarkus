@@ -18,6 +18,7 @@ public class JpaDocumentRepository implements DocumentRepository {
 
     @Override
     public Document create(Document document) {
+        document.setUuid(UUID.randomUUID());
         entityManager.persist(document);
         return document;
     }
@@ -30,8 +31,8 @@ public class JpaDocumentRepository implements DocumentRepository {
     }
 
     @Override
-    public Optional<Document> findById(UUID uuid) {
-        var entity = entityManager.find(Document.class, uuid);
+    public Optional<Document> findById(Long id) {
+        var entity = entityManager.find(Document.class, id);
         return Optional.ofNullable(entity);
     }
 
@@ -55,8 +56,34 @@ public class JpaDocumentRepository implements DocumentRepository {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         var entity = entityManager.getReference(Document.class, id);
         entityManager.remove(entity);
+    }
+
+    @Override
+    public Document findByUuid(UUID uuid) {
+        var id = findId(uuid);
+        return findById(id).get();
+    }
+
+    @Override
+    public Document updateByUuid(UUID uuid, Document document) {
+        var id = findId(uuid);
+        document.setId(id);
+        document.setUuid(uuid);
+        return update(document);
+    }
+
+    @Override
+    public void deleteByUuid(UUID uuid) {
+        var id = findId(uuid);
+        deleteById(id);
+    }
+
+    private Long findId(UUID uuid) {
+        var query = entityManager.createNamedQuery("Document.findId", Long.class);
+        query.setParameter("uuid", uuid);
+        return query.getSingleResult();
     }
 }

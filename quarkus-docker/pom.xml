@@ -11,7 +11,7 @@
         <relativePath>../quarkus-parent</relativePath>
     </parent>
 
-    <name>Quarkus Docker base image</name>
+    <description>Quarkus Docker base image</description>
     <artifactId>quarkus-docker</artifactId>
     <packaging>jar</packaging>
 

@@ -2,7 +2,6 @@ package org.acme.util.adapter.rest;
 
 import javax.ws.rs.core.Link;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +11,6 @@ public interface Links {
     String SELF = "self";
     String OFFSET = "offset";
     String LIMIT = "limit";
-
-    static <T> URI getLocation(UriInfo uriInfo, T id) {
-        return uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
-    }
 
     static Link getSelfLink(UriInfo uriInfo) {
         final var uri = uriInfo.getAbsolutePath();

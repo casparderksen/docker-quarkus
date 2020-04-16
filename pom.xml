@@ -3,13 +3,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Quarkus Docker Project</name>
+    <description>Quarkus project root</description>
     <groupId>org.acme</groupId>
     <artifactId>quarkus-project</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
+        <module>quarkus-bom</module>
         <module>quarkus-parent</module>
         <module>quarkus-docker</module>
         <module>quarkus-example-app</module>

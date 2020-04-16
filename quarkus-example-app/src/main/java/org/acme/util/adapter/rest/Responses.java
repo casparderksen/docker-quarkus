@@ -16,27 +16,21 @@ public interface Responses {
         return Response.ok(entity).links(self).build();
     }
 
-    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
-    static <T> Response getEntityResponse(Optional<T> optional, UriInfo uriInfo) {
-        if (optional.isPresent()) {
-            return getEntityResponse(optional.get(), uriInfo);
-        }
-        throw new WebApplicationException(NOT_FOUND);
-    }
-
-    static <T> Response getEntityResponse(List<T> entities, int start, int count, UriInfo uriInfo) {
+    static <T> Response getEntitiesResponse(List<T> entities, int start, int count, UriInfo uriInfo) {
         final var paginationLinks = Links.getPaginationLinks(start, count, entities.size(), uriInfo);
         return Response.ok(toEntity(entities)).links(paginationLinks).build();
     }
 
     static <T, I> Response getCreatedResponse(T entity, I id, UriInfo uriInfo) {
-        final var location = Links.getLocation(uriInfo, id);
+        final var location = uriInfo.getAbsolutePathBuilder().path(id.toString()).build();
         return Response.created(location).entity(entity).build();
     }
 
     static Response getNoContentResponse() {
         return Response.noContent().build();
     }
+
+    static Response getNotFoundResponse() { return Response.status(NOT_FOUND).build(); }
 
     static <T> GenericEntity<List<T>> toEntity(final List<T> list) {
         return new GenericEntity<>(list) {
