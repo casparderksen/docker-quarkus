@@ -116,6 +116,9 @@
                                         </tags>
                                     </build>
                                     <run>
+                                        <env>
+                                            <QUARKUS_DATASOURCE_URL>${env.QUARKUS_DATASOURCE_URL}</QUARKUS_DATASOURCE_URL>
+                                        </env>
                                         <ports>
                                             <port>8080:8080</port>
                                         </ports>

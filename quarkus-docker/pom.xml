@@ -11,7 +11,7 @@
         <relativePath>../quarkus-parent</relativePath>
     </parent>
 
-    <description>Quarkus Docker base image</description>
+    <description>Quarkus Docker base images</description>
     <artifactId>quarkus-docker</artifactId>
     <packaging>jar</packaging>
 
@@ -21,10 +21,32 @@
             <build>
                 <plugins>
                     <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>git-info</id>
+                                <goals>
+                                    <goal>revision</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
                         <groupId>io.fabric8</groupId>
                         <artifactId>docker-maven-plugin</artifactId>
                         <configuration>
                             <images>
+                                <image>
+                                    <name>quarkus/base</name>
+                                    <build>
+                                        <contextDir>base</contextDir>
+                                        <tags>
+                                            <tag>${project.version}</tag>
+                                        </tags>
+                                    </build>
+                                </image>
                                 <image>
                                     <name>quarkus/jvm</name>
                                     <build>

@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>quarkus-bom</module>
         <module>quarkus-parent</module>
         <module>quarkus-docker</module>
         <module>quarkus-example-app</module>

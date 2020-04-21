@@ -11,7 +11,7 @@ services:
       - "oradata:/opt/oracle/oradata"
 
   example-app:
-    image: my/thorntail-example-app:latest
+    image:  quarkus/quarkus-example-app:latest
     ports:
       - "8080:8080"
 

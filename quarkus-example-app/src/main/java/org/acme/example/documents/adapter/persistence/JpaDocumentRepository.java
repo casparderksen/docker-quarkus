@@ -25,7 +25,7 @@ public class JpaDocumentRepository implements DocumentRepository {
 
     @Override
     public Document update(Document document) {
-        // Throws exception if entity not found
+        // Throws EntityNotFoundException if not found
         entityManager.getReference(Document.class, document.getId());
         return entityManager.merge(document);
     }
@@ -63,13 +63,13 @@ public class JpaDocumentRepository implements DocumentRepository {
 
     @Override
     public Document findByUuid(UUID uuid) {
-        var id = findId(uuid);
+        var id = findDocumentId(uuid);
         return findById(id).get();
     }
 
     @Override
     public Document updateByUuid(UUID uuid, Document document) {
-        var id = findId(uuid);
+        var id = findDocumentId(uuid);
         document.setId(id);
         document.setUuid(uuid);
         return update(document);
@@ -77,11 +77,11 @@ public class JpaDocumentRepository implements DocumentRepository {
 
     @Override
     public void deleteByUuid(UUID uuid) {
-        var id = findId(uuid);
+        var id = findDocumentId(uuid);
         deleteById(id);
     }
 
-    private Long findId(UUID uuid) {
+    private Long findDocumentId(UUID uuid) {
         var query = entityManager.createNamedQuery("Document.findId", Long.class);
         query.setParameter("uuid", uuid);
         return query.getSingleResult();

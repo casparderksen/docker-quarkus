@@ -336,10 +336,10 @@
             <id>oracle</id>
             <properties>
                 <database>oracle</database>
-                <oracle.connection-url>jdbc:oracle:thin:@//oracledb:1521/ORCLPDB1</oracle.connection-url>
                 <flyway.url>jdbc:oracle:thin:@//localhost:1521/ORCLPDB1</flyway.url>
                 <flyway.user>example</flyway.user>
                 <flyway.password>example</flyway.password>
+                <flyway.locations>filesystem:src/main/resources/db/migration/oracle</flyway.locations>
             </properties>
             <dependencies>
                 <dependency>
