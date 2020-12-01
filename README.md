@@ -162,10 +162,10 @@ and Oracle database.
 ## Prerequisites
 
 First build an Oracle container image as described in [https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance](https://github.com/oracle/docker-images/tree/master/OracleDatabase/SingleInstance). 
-For Oracle Database 12.2.0.1 Enterprise Edition this involves the following steps:
+For Oracle Database 19.3.0 Enterprise Edition this involves the following steps:
 
-1. Place `linuxx64_12201_database.zip` in `dockerfiles/12.2.0.1`.
-2. Go to `dockerfiles` and run `buildDockerImage.sh -v 12.2.0.1 -e`
+1. Place `LINUX.X64_193000_db_home.zip` in `dockerfiles/19.3.0`.
+2. Go to `dockerfiles` and run `buildDockerImage.sh -v 19.3.0 -e`
 
 ## Build the application
 
@@ -189,11 +189,28 @@ When the database is ready start the application container:
     $ docker-compose up -d  example-app
     $ docker-compose logs -f example-app
     
-# Oracle native
+# Building native executables
 
-See [here](https://github.com/quarkusio/quarkus/issues/1658#issuecomment-523618130) for native Oracle support.
+## Prerequisites
 
-# References
+Install GraalVM. Om Mac with MacPorts installed:
+
+    $ sudo port install openjdk11-graalvm
+    $ export JAVA_HOME=/Library/Java/JavaVirtualMachines/openjdk11-graalvm/Contents/Home
+    $ sudo $JAVA_HOME/bin/gu install native-image
+    
+## Building the native executable
+
+TODO: add supported database
+
+    $ mvn package -Pnative
+    
+## No native Oracle support
+
+Quarkus does not support native executables with the Oracle JDBC driver.
+See [here](https://github.com/quarkusio/quarkus/issues/1658).
+
+# References and attributions
 
 Quarkus:
 - [Quarkus guides](https://quarkus.io/guides/)
@@ -212,6 +229,10 @@ Java in Docker:
 
 Testing:
 - [ArchUnit architecture testing](https://www.archunit.org)
+
+Prometheus:
+- [https://github.com/vegasbrianc/prometheus](https://github.com/vegasbrianc/prometheus)
+- [https://github.com/iamseth/oracledb_exporter](https://github.com/iamseth/oracledb_exporter)
 
 Oracle:
 - [OJDBC compatibility](https://www.oracle.com/technetwork/database/enterprise-edition/jdbc-faq-090281.html#01_01)

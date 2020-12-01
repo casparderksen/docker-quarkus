@@ -1,4 +1,4 @@
-FROM oracle/database:12.2.0.1-ee
+FROM oracle/database:19.3.0-ee
 
 ENV ORACLE_SID=ORCLCDB
 ENV ORACLE_PDB=ORCLPDB1
