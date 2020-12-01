@@ -59,6 +59,7 @@
                                                 <file>
                                                     <source>${project.build.directory}/docker-extra/run-java/run-java.sh</source>
                                                     <destName>run-java.sh</destName>
+                                                    <fileMode>0755</fileMode>
                                                 </file>
                                             </inline>
                                         </assembly>
