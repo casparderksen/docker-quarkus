@@ -13,6 +13,7 @@ RUN microdnf install java-11-openjdk-headless \
 
 # Add run-java.sh script (downloaded by Maven)
 COPY maven/run-java.sh /usr/local/bin
+RUN chmod 0755 /usr/local/bin/run-java.sh
 
 # Set Java appliction directory
 ENV JAVA_APP_DIR /opt
